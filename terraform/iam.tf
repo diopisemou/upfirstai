@@ -13,7 +13,3 @@ resource "aws_iam_role" "github_actions" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "github_actions" {
-  role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions.arn
-}

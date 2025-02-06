@@ -118,6 +118,28 @@ jobs:
           TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
           TF_VAR_ecr_repository: ${{ env.ECR_REPOSITORY }}
           TF_VAR_image_tag: ${{ env.IMAGE_TAG }}
+      
+      - name: Deploy to ECS
+        run: |
+          # Update ECS task definition with new image
+          TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition upfirstai-task)
+          NEW_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE "${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities)')
+          aws ecs register-task-definition --cli-input-json "$NEW_DEFINITION"
+          
+          # Update ECS service
+          aws ecs update-service \
+            --cluster upfirstai-cluster \
+            --service upfirstai-service \
+            --task-definition upfirstai-task \
+            --force-new-deployment
+          
+          # Wait for deployment completion
+          aws ecs wait services-stable \
+            --cluster upfirstai-cluster \
+            --services upfirstai-services
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          AWS_REGION: ${{ env.AWS_REGION }}
 
   cleanup:
     name: Cleanup (Failure)
