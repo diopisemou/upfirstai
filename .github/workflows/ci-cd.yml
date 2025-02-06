@@ -1,0 +1,113 @@
+name: Upfirst OAuth API CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  AWS_REGION: us-west-2
+  ECR_REPOSITORY: upfirstai_api_ts
+  IMAGE_TAG: latest
+  TERRAFORM_DIR: './terraform'
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+  docker-scan-push:
+    name: Docker Build & Security Scan
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+      security-events: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::586794453336:role/GithubOIDCRole
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GitHubActions-${{ github.run_id }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY/$ECR_REPOSITORY:$IMAGE_TAG \
+            --label "git_sha=${{ github.sha }}" \
+            --label "build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" .
+
+      - name: Push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+        run: |
+          docker push ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+
+  cleanup:
+    name: Cleanup (Failure)
+    if: failure()
+    needs: [docker-scan-push]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::586794453336:role/GithubOIDCRole
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: Terraform-${{ github.run_id }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+          terraform_version: 1.5.7
+  
+      - name: Terraform Destroy
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: |
+          terraform init -input=false
+          terraform destroy -auto-approve -input=false
+
+      - name: Remove Docker images
+        run: |
+          docker rmi ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} || true

@@ -1,0 +1,22 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ecr:*",
+                "ecs:*",
+                "logs:*",
+                "iam:GetRole",
+                "s3:*",
+                "dynamodb:*"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "aws:RequestedRegion": "us-west-2"
+                }
+            }
+        }
+    ]
+}
