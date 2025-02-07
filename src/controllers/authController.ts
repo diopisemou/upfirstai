@@ -51,7 +51,7 @@ export const authorizeController =
         clientId: client_id,
         scopes: requestedScopes 
       });
-      MonitoringService.getInstance().recordAuthRequest();
+      // MonitoringService.getInstance().recordAuthRequest();
 
       // Redirect with authorization code
       const redirectUrl = new URL(redirect_uri as string);

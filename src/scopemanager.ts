@@ -1,4 +1,8 @@
 export enum PermissionScope {
+
+    PUBLIC_READ = 'public:read',
+    PUBLIC_WRITE = 'public:write',
+
     // User-level scopes
     PROFILE_READ = 'profile:read',
     PROFILE_WRITE = 'profile:write',
@@ -22,6 +26,8 @@ export enum PermissionScope {
       'upfirst': {
         clientId: 'upfirst',
         allowedScopes: [
+          PermissionScope.PUBLIC_READ,
+          PermissionScope.PUBLIC_WRITE,
           PermissionScope.PROFILE_READ,
           PermissionScope.PROFILE_WRITE
         ]
