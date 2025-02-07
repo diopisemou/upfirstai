@@ -24,12 +24,12 @@ app.post('/api/oauth/token', tokenController);
 // Error Handling Middleware (should come AFTER route definitions)
 app.use(errorHandler);
 
-if(process.env.ENVIRONNEMENT === 'prod')
-  {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  }
+if(process.env.ENVIRONNEMENT !== 'test')
+{
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 export const startServer = (port: number) => {
   server = app.listen(port);
