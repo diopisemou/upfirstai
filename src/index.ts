@@ -5,6 +5,7 @@ import { tokenController } from './controllers/tokenController';
 import { processController } from './controllers/processController';
 import { rateLimitConfig } from './rateLimit';
 import { errorHandler } from './services/errorHandler';
+import { authMiddleware } from './middleware/authMiddleware';
 
 const app = express();
 let server: any;
@@ -20,7 +21,7 @@ app.use('/api/oauth/authorize', rateLimitConfig.auth);
 
 // OAuth Endpoints
 app.get('/api/oauth/authorize', authorizeController);
-app.post('/api/oauth/token', tokenController);
+app.post('/api/oauth/token', authMiddleware, tokenController);
 
 app.post('/process', processController);
 
