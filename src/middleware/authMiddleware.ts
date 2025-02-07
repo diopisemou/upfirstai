@@ -28,7 +28,8 @@ export const authMiddleware = async (
     if (decodedToken.scopes) {
       req.user = {
         clientId: decodedToken.clientId as string,
-        scopes: decodedToken.scopes as PermissionScope[]
+        scopes: decodedToken.scopes as PermissionScope[],
+        token_expiry_time: decodedToken.exp as number
       };
     }
 

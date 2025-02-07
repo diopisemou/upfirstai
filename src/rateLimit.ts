@@ -22,5 +22,10 @@ export const rateLimitConfig = {
     windowMs: 5 * 60 * 1000, // 5 minutes
     max: 50, // Limit token requests
     message: 'Too many token requests'
+  }),
+  hello: rateLimit({
+    windowMs: 60 * 60 * 1000, // 60 minutes
+    max: 1000, // Limit token requests
+    message: 'Too many hello requests'
   })
 };

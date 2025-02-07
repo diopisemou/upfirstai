@@ -6,6 +6,8 @@ import { processController } from './controllers/processController';
 import { rateLimitConfig } from './rateLimit';
 import { errorHandler } from './services/errorHandler';
 import { authMiddleware } from './middleware/authMiddleware';
+import { helloController } from './controllers/helloController';
+import path from 'path';
 
 const app = express();
 let server: any;
@@ -21,10 +23,14 @@ app.use('/api/oauth/authorize', rateLimitConfig.auth);
 
 // OAuth Endpoints
 app.get('/api/oauth/authorize', authorizeController);
-app.post('/api/oauth/token', authMiddleware, tokenController);
+app.post('/api/oauth/token', tokenController);
+app.get('/process', processController);
 
-app.post('/process', processController);
+app.post('/hello', authMiddleware, helloController);
 
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'view.html'));
+// });
 // Error Handling Middleware (should come AFTER route definitions)
 app.use(errorHandler);
 

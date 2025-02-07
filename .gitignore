@@ -53,3 +53,5 @@ docker-compose.override.yml
 # System Files
 Thumbs.db
 ehthumbs.db
+
+view.html

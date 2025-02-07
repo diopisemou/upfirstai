@@ -53,6 +53,18 @@ export interface ProcessRequest {
   scope: string;
 }
 
+export interface HelloRequest {
+  name: string;
+}
+
+// Token Response Interface
+export interface HelloResponse {
+    message: string;
+    client_id: string;
+    token_expiry_time: number;
+}
+
+
 // Extended Request Interface
 declare global {
   namespace Express {
@@ -60,6 +72,7 @@ declare global {
       user?: {
         clientId: string;
         scopes: PermissionScope[] | undefined;
+        token_expiry_time: number | undefined;
       };
     }
   }
