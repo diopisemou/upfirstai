@@ -44,6 +44,15 @@ export interface OAuthClientConfig {
   allowedGrantTypes: string[];
 }
 
+// Base OAuth Request Types
+export interface ProcessRequest {
+  code: string;
+  state: string;
+  client_id: string;
+  redirect_uri: string;
+  scope: string;
+}
+
 // Extended Request Interface
 declare global {
   namespace Express {
