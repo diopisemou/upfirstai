@@ -70,6 +70,7 @@ export const tokenController = [
         expires_in: 3600,
         refresh_token: await refreshToken
       });
+      
     } catch (error) {
       next(error);
     }

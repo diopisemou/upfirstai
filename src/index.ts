@@ -13,24 +13,29 @@ const app = express();
 let server: any;
 const PORT = process.env.PORT || 8080;
 
+app.set('trust proxy', 1);
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.post('/hello', authMiddleware, helloController);
+app.get('/process', processController);
+
 // Apply rate limiting to token requests
+app.use('/hello', rateLimitConfig.hello);
 app.use('/api/oauth/token', rateLimitConfig.token); // Apply rate limiting to this specific route
 app.use('/api/oauth/authorize', rateLimitConfig.auth);
 
 // OAuth Endpoints
 app.get('/api/oauth/authorize', authorizeController);
 app.post('/api/oauth/token', tokenController);
-app.get('/process', processController);
 
-app.post('/hello', authMiddleware, helloController);
-
+// app.use(express.static(path.join(__dirname, '../')));
 // app.get('/', (req, res) => {
 //   res.sendFile(path.join(__dirname, 'view.html'));
 // });
+
 // Error Handling Middleware (should come AFTER route definitions)
 app.use(errorHandler);
 

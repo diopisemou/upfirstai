@@ -1,19 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import LoggerService from '../services/loggerService';
 import { ProcessRequest } from '../types/oauth';
-import { CodeStorage } from '../helpers/storage';
 import { TokenService } from '../services/tokenService';
 
-const codeStorage = new CodeStorage();
 export const processController = 
   async (req: Request<{}, {}, {}, ProcessRequest>, res: Response, next: NextFunction) => {
     try {
       const { 
         code,
-        state, 
-        client_id, 
-        redirect_uri, 
-        scope,
+        state
       } = req.query;
 
       // Validate request parameters
@@ -26,16 +21,12 @@ export const processController =
      
       // Log and monitor
       LoggerService.info('Authorization code generated', { 
-        clientId: client_id, 
+        clientId: decodedToken.aud, 
+        state: state
       });
-      // MonitoringService.getInstance().recordAuthRequest();
+      // MonitoringService.getInstance().recordAuthRequest(); 
 
-      // Redirect with authorization code
-      const redirectUrl = new URL(redirect_uri as string);
-      redirectUrl.searchParams.append('code', code);
-      if (state) redirectUrl.searchParams.append('state', state as string);
-
-      res.redirect(302, redirectUrl.toString());
+      res.redirect(200, '/');
 
     } catch (error) {
       next(error);

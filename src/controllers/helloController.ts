@@ -16,9 +16,6 @@ export const helloController = [
         client_id: req.user?.clientId as string,
         token_expiry_time: req.user?.token_expiry_time as number
       });
-
-
-
     } catch (error) {
       next(error);
     }

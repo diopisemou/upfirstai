@@ -58,8 +58,14 @@ export const authorizeController =
       redirectUrl.searchParams.append('code', code);
       if (state) redirectUrl.searchParams.append('state', state as string);
 
-      res.redirect(302, redirectUrl.toString());
+      // res.location(redirectUrl.toString());
+      // res.redirect(302, redirectUrl.toString());
 
+      // Send 302 Found response with Location header
+      return res.status(302)
+            .set('Location', redirectUrl.toString())
+            .end(); // End the response to prevent further processing
+      
     } catch (error) {
       next(error);
     }
