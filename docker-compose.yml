@@ -9,3 +9,4 @@ services:
       - TOKEN_EXPIRY='3600'
       - LOG_LEVEL='info'
       - ENVIRONNEMENT='prod'
+      - ENABLE_REDIRECT_PROCESSING='false'

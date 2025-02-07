@@ -30,7 +30,8 @@ class ConfigManager {
       JWT_SECRET: process.env.JWT_SECRET || this.generateFallbackSecret(),
       TOKEN_EXPIRY: process.env.TOKEN_EXPIRY || '3600',
       LOG_LEVEL: process.env.LOG_LEVEL || 'info',
-      ENVIRONNEMENT: process.env.ENVIRONNEMENT || 'prod'
+      ENVIRONNEMENT: process.env.ENVIRONNEMENT || 'prod',
+      ENABLE_REDIRECT_PROCESSING: process.env.ENABLE_REDIRECT_PROCESSING || 'false'
       
     };
   }

@@ -2,7 +2,6 @@ import request from 'supertest';
 import { TokenService } from '../services/tokenService';
 import  {startServer, stopServer } from '../index';
 import { App } from 'supertest/types';
-import LoggerService from '../services/loggerService';
 
 let app: App;
 beforeAll(() => {
@@ -24,7 +23,7 @@ describe('OAuth 2.0 API', () => {
 
  
       const response = await request(app)
-        .post('/hello')
+        .post('/api/hello')
         .auth(
           token.toString(),
           { type: 'bearer'}

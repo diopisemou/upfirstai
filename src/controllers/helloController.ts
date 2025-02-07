@@ -12,7 +12,7 @@ export const helloController = [
       } = req.body;
 
       res.json({
-        message: `Hello ${name}`,
+        message: `Hello ${name}!`,
         client_id: req.user?.clientId as string,
         token_expiry_time: req.user?.token_expiry_time as number
       });
