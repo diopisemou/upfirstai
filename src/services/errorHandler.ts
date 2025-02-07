@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 
 class OAuthError extends Error {
-  status: number;
+  status: number | undefined;
   code?: string;
 
   constructor(message: string, status: number, code?: string) {
     super(message);
-    this.status = status;
-    this.code = code;
+      this.status = status;
+      this.code = code;
   }
 }
 
@@ -25,7 +25,7 @@ export const errorHandler = (
     ...(err instanceof OAuthError && err.code ? { error_code: err.code } : {})
   };
 
-  res.status(status).json(errorResponse);
+  res.status(status as number).json(errorResponse);
 };
 
 export const createOAuthError = {

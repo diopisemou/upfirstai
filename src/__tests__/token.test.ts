@@ -34,9 +34,9 @@ describe('OAuth 2.0 API', () => {
           client_id: 'invalid_client',
           redirect_uri: 'http://localhost:8081/process'
         });
-
       expect(response.status).toBe(401);
     });
+
   });
 
   describe('Token Endpoint', () => {
@@ -67,8 +67,7 @@ describe('OAuth 2.0 API', () => {
             code: code,
             client_id: 'code',
             redirect_uri: 'http://localhost:8081/process'
-          });
-  
+        });
         expect(response.status).toBe(401);
         expect(response.body).not.toHaveProperty('access_token');
         expect(response.body).not.toHaveProperty('token_type', 'bearer');

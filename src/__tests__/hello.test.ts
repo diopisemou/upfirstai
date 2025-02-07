@@ -20,13 +20,13 @@ describe('OAuth 2.0 API', () => {
         clientId: 'upfirst',
         type: 'authorization_code',
         scopes: undefined
-      });
+      }).accessToken;
 
  
       const response = await request(app)
         .post('/hello')
         .auth(
-          (await token.accessToken).toString(),
+          token.toString(),
           { type: 'bearer'}
         )
         .send({

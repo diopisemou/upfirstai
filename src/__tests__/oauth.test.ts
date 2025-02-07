@@ -35,8 +35,8 @@ describe('OAuth Authorization Flow', () => {
           client_id: 'invalid_client',
           redirect_uri: 'http://localhost:8081/process'
         });
-
       expect(response.status).toBe(401);
     });
+
   });
 });
